@@ -1,0 +1,44 @@
+.seal-carousel_nav-btn {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border-radius: 100%;
+  box-shadow: 0 0 4px 0 rgb(153 153 153 / 30%);
+  z-index: 20;
+  font-size: 50px;
+  color: #777;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity .2s;
+
+  &._hidden {
+    display: none;
+  }
+
+  &:hover {
+    opacity: 0.9;
+    transition: opacity .2s;
+  }
+
+  &:after {
+    position: relative;
+    top: -9px;
+  }
+}
+
+.prev-btn {
+  left: 8px;
+
+  &:after {
+    content: '\2039';
+  }
+}
+
+.next-btn {
+  right: 8px;
+
+  &:after {
+    content: '\203A';
+  }
+}

@@ -1,7 +1,10 @@
 import dispatcher from "../modules/EventDispatcher";
 import Tape from "./Tape";
+import {Config} from "../interfaces/Config";
 
 class Slide {
+    public width: number;
+
     private readonly _tape: Tape;
     private readonly _element: HTMLElement;
 
@@ -22,7 +25,23 @@ class Slide {
 
     init = () => {
         this._tape.element.appendChild(this.element);
+        this.setInlineStyles();
+    }
 
+    setInlineStyles = () => {
+        const config = this.tape.carousel.config;
+        let width: number;
+
+        console.log(getComputedStyle(this.element).width);
+        if (config.itemWidth) {
+            width = config.itemWidth;
+        } else {
+            width = this.element.getBoundingClientRect().width;
+        }
+
+        this.width = width;
+
+        this.element.style.minWidth = `${width}px`;
     }
 }
 

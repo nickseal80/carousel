@@ -1,6 +1,7 @@
-export type EventCallback = (data: {}) => void;
+export type EventCallback = (carouselEvent: CarouselEvent) => void;
 export type Events = { [key: string]: EventCallback[]; }
 export type EventData = { [key: string]: any }
+export type CarouselEvent = { type: string, data: EventData }
 
 class EventDispatcher {
     protected events: Events = {};

@@ -24,7 +24,6 @@ class Carousel {
 
     init = () => {
         const slides: HTMLElement[] = Array.prototype.slice.call(this.element.children);
-        this.initSlidesStyles(slides);
 
         if (slides.length > 0) {
             this._element.innerHTML = '';
@@ -39,19 +38,6 @@ class Carousel {
 
             dispatcher.trigger('carouselInitialized', { carousel: this });
         }
-    }
-
-    initSlidesStyles = (slides: HTMLElement[]) => {
-        let width: number;
-        slides.forEach(slide => {
-            if (this.config.itemWidth && this.config.itemWidth > 0) {
-                width = this.config.itemWidth;
-            } else {
-                width = slide.getBoundingClientRect().width;
-            }
-
-            slide.style.minWidth = `${width}px`;
-        })
     }
 }
 

@@ -30,4 +30,8 @@ export { carousel, store };
 carousel.setInstance('div[data-type="carousel"]', {
     itemWidth: 152,
     navButtons: true,
+    scrollOptions: {
+        scrollItemsCount: 1,
+        scrollPage: false,
+    }
 });

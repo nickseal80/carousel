@@ -1,8 +1,30 @@
 export interface Config {
+
+    /*
+     * ширина слайда (задаётся при одинаковой ширине всех слайдов)
+     */
     itemWidth?: number;
+
+    /*
+     * кол-во отображаемых слайдов
+     */
     visibleItemsCount?: number;
+
+    /*
+     * кнопки навигации
+     */
     navButtons?: boolean;
-    navButtonsOptions?: {
-        scrollItemsCount?: number|string;
+    scrollOptions?: {
+
+        /*
+         * кол-во прокручиваемых элементов
+         */
+        scrollItemsCount?: number;
+
+        /*
+         * если true, то прокручиваем все видимые элементы, при этом
+         * параметр scrollItemsCount игнорируется
+         */
+        scrollPage?: boolean;
     }
 }

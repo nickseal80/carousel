@@ -1,4 +1,5 @@
 import dispatcher from "../../modules/EventDispatcher";
+import constants from "../../constants";
 
 class NavButtons {
     private prevButton: HTMLDivElement;
@@ -23,7 +24,7 @@ class NavButtons {
         btn.classList.add('seal-carousel_nav-btn');
         btn.classList.add('prev-btn');
         btn.addEventListener('click', () => {
-            dispatcher.trigger('navBtnClick', {direction: 'prev'});
+            dispatcher.trigger('navBtnClick', {direction: constants.SCROLL_DIRECTION_PREV});
         });
 
         return btn;
@@ -34,7 +35,7 @@ class NavButtons {
         btn.classList.add('seal-carousel_nav-btn');
         btn.classList.add('next-btn');
         btn.addEventListener('click', () => {
-            dispatcher.trigger('navBtnClick', {direction: 'next'});
+            dispatcher.trigger('navBtnClick', {direction: constants.SCROLL_DIRECTION_NEXT});
         });
 
         return btn;

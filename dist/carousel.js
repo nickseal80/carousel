@@ -126,7 +126,7 @@ eval("\n\n/* istanbul ignore next  */\nfunction styleTagTransform(css, styleElem
   \**********************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ../modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nconst Tape_1 = __importDefault(__webpack_require__(/*! ./Tape */ \"./src/carousel/Tape.ts\"));\nconst Navigation_1 = __importDefault(__webpack_require__(/*! ./navigation/Navigation */ \"./src/carousel/navigation/Navigation.ts\"));\nclass Carousel {\n    constructor(element, config) {\n        this.init = () => {\n            const slides = Array.prototype.slice.call(this.element.children);\n            if (slides.length > 0) {\n                this._element.innerHTML = '';\n                // вставка навигационных кнопок\n                if (this.config.navButtons) {\n                    new Navigation_1.default(this, this.config);\n                }\n                // вставка слайдера\n                new Tape_1.default(this, slides);\n                EventDispatcher_1.default.trigger('carouselInitialized', { carousel: this });\n            }\n        };\n        this._element = element;\n        this._config = config;\n        this.element.classList.add('seal-carousel');\n        this.init();\n    }\n    get element() {\n        return this._element;\n    }\n    get config() {\n        return this._config;\n    }\n}\nexports[\"default\"] = Carousel;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/Carousel.ts?");
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ../modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nconst index_1 = __webpack_require__(/*! ../index */ \"./src/index.ts\");\nconst Tape_1 = __importDefault(__webpack_require__(/*! ./Tape */ \"./src/carousel/Tape.ts\"));\nconst Navigation_1 = __importDefault(__webpack_require__(/*! ./navigation/Navigation */ \"./src/carousel/navigation/Navigation.ts\"));\nconst actions_1 = __webpack_require__(/*! ../store/carousel/actions */ \"./src/store/carousel/actions.ts\");\nconst Slide_1 = __importDefault(__webpack_require__(/*! ./Slide */ \"./src/carousel/Slide.ts\"));\nconst actions_2 = __webpack_require__(/*! ../store/slides/actions */ \"./src/store/slides/actions.ts\");\nclass Carousel {\n    constructor(element, config) {\n        this.init = () => {\n            const slides = Array.prototype.slice.call(this.element.children);\n            if (slides.length > 0) {\n                const items = slides.map((slide) => {\n                    let width;\n                    if (this.config.itemWidth) {\n                        width = `${this.config.itemWidth}px`;\n                    }\n                    else {\n                        width = getComputedStyle(slide).width;\n                    }\n                    slide.style.minWidth = width;\n                    return new Slide_1.default(slide);\n                });\n                this._element.innerHTML = '';\n                // вставка навигационных кнопок\n                if (this.config.navButtons) {\n                    new Navigation_1.default(this, this.config);\n                }\n                // вставка слайдера\n                new Tape_1.default(this);\n                index_1.store.dispatch((0, actions_1.updateFrameWidth)(this.element.getBoundingClientRect().width));\n                index_1.store.dispatch((0, actions_2.updateSlides)(items));\n                EventDispatcher_1.default.trigger('carouselInitialized', { carousel: this });\n            }\n        };\n        this._element = element;\n        this._config = config;\n        this.element.classList.add('seal-carousel');\n        this.init();\n    }\n    get element() {\n        return this._element;\n    }\n    get config() {\n        return this._config;\n    }\n}\nexports[\"default\"] = Carousel;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/Carousel.ts?");
 
 /***/ }),
 
@@ -136,7 +136,7 @@ eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {
   \*******************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nclass Slide {\n    constructor(tape, slideElement) {\n        this.init = () => {\n            this._tape.element.appendChild(this.element);\n            this.setInlineStyles();\n        };\n        this.setInlineStyles = () => {\n            const config = this.tape.carousel.config;\n            let width;\n            console.log(getComputedStyle(this.element).width);\n            if (config.itemWidth) {\n                width = config.itemWidth;\n            }\n            else {\n                width = this.element.getBoundingClientRect().width;\n            }\n            this.width = width;\n            this.element.style.minWidth = `${width}px`;\n        };\n        this._tape = tape;\n        this._element = slideElement;\n        this.init();\n    }\n    get tape() {\n        return this._tape;\n    }\n    get element() {\n        return this._element;\n    }\n}\nexports[\"default\"] = Slide;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/Slide.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nclass Slide {\n    constructor(slideElement) {\n        this.init = (tape) => {\n            tape.element.appendChild(this.element);\n        };\n        this._element = slideElement;\n    }\n    get element() {\n        return this._element;\n    }\n}\nexports[\"default\"] = Slide;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/Slide.ts?");
 
 /***/ }),
 
@@ -146,7 +146,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nclas
   \******************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ../modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nconst Slide_1 = __importDefault(__webpack_require__(/*! ./Slide */ \"./src/carousel/Slide.ts\"));\nclass Tape {\n    constructor(carousel, slides) {\n        this.initSlides = (slides) => {\n            Array.prototype.forEach.call(slides, slideElement => {\n                new Slide_1.default(this, slideElement);\n            });\n        };\n        this.createTapeElement = () => {\n            const tape = document.createElement('div');\n            tape.classList.add('seal-carousel_tape');\n            EventDispatcher_1.default.on('changeTapePosition', (evt) => {\n                tape.style.left = `${evt.data.position}px`;\n            });\n            return tape;\n        };\n        this._element = this.createTapeElement();\n        this._carousel = carousel;\n        carousel.element.appendChild(this._element);\n        this.initSlides(slides);\n        EventDispatcher_1.default.on('navBtnClick', (evt) => {\n            if (evt.data.direction === 'next') {\n                this.position = -10;\n            }\n            else if (evt.data.direction === 'prev') {\n                this.position = 0;\n            }\n        });\n    }\n    get carousel() {\n        return this._carousel;\n    }\n    get element() {\n        return this._element;\n    }\n    get position() {\n        return this._position;\n    }\n    set position(value) {\n        this._position = value;\n        EventDispatcher_1.default.trigger('changeTapePosition', { position: value });\n    }\n}\nexports[\"default\"] = Tape;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/Tape.ts?");
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ../modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nconst index_1 = __webpack_require__(/*! ../index */ \"./src/index.ts\");\nconst constants_1 = __importDefault(__webpack_require__(/*! ../constants */ \"./src/constants.ts\"));\nclass Tape {\n    constructor(carousel) {\n        this.initSlides = () => {\n            index_1.store.subscribe(() => {\n                if (index_1.store.state.slides.items.length > 0) {\n                    index_1.store.state.slides.items.forEach((item) => {\n                        item.init(this);\n                    });\n                }\n            });\n        };\n        this.initListeners = () => {\n            EventDispatcher_1.default.on('navBtnClick', this.scrollByStep);\n        };\n        this.scrollByStep = (evt) => {\n            if (evt.data.direction === constants_1.default.SCROLL_DIRECTION_PREV) {\n                this.scrollByStepPrev();\n            }\n            else if (evt.data.direction === constants_1.default.SCROLL_DIRECTION_NEXT) {\n                this.scrollByStepNext();\n            }\n        };\n        this.scrollByStepPrev = () => {\n            console.log('scroll prev');\n        };\n        this.scrollByStepNext = () => {\n            console.log('scroll next');\n        };\n        this.createTapeElement = () => {\n            const tape = document.createElement('div');\n            tape.classList.add('seal-carousel_tape');\n            EventDispatcher_1.default.on('changeTapePosition', (evt) => {\n                tape.style.left = `${evt.data.position}px`;\n            });\n            return tape;\n        };\n        this._element = this.createTapeElement();\n        carousel.element.appendChild(this._element);\n        this.initSlides();\n        this.initListeners();\n    }\n    get element() {\n        return this._element;\n    }\n}\nexports[\"default\"] = Tape;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/Tape.ts?");
 
 /***/ }),
 
@@ -156,7 +156,7 @@ eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {
   \***********************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ../../modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nclass NavButtons {\n    constructor() {\n        this.render = (target) => {\n            target.appendChild(this.prevButton);\n            target.appendChild(this.nextButton);\n        };\n        this.buildNavButtons = () => {\n            this.prevButton = this.buildPrevButton();\n            this.nextButton = this.buildNextButton();\n        };\n        this.buildPrevButton = () => {\n            const btn = document.createElement('div');\n            btn.classList.add('seal-carousel_nav-btn');\n            btn.classList.add('prev-btn');\n            btn.addEventListener('click', () => {\n                EventDispatcher_1.default.trigger('navBtnClick', { direction: 'prev' });\n            });\n            return btn;\n        };\n        this.buildNextButton = () => {\n            const btn = document.createElement('div');\n            btn.classList.add('seal-carousel_nav-btn');\n            btn.classList.add('next-btn');\n            btn.addEventListener('click', () => {\n                EventDispatcher_1.default.trigger('navBtnClick', { direction: 'next' });\n            });\n            return btn;\n        };\n        this.buildNavButtons();\n    }\n}\nexports[\"default\"] = NavButtons;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/navigation/NavButtons.ts?");
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ../../modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nconst constants_1 = __importDefault(__webpack_require__(/*! ../../constants */ \"./src/constants.ts\"));\nclass NavButtons {\n    constructor() {\n        this.render = (target) => {\n            target.appendChild(this.prevButton);\n            target.appendChild(this.nextButton);\n        };\n        this.buildNavButtons = () => {\n            this.prevButton = this.buildPrevButton();\n            this.nextButton = this.buildNextButton();\n        };\n        this.buildPrevButton = () => {\n            const btn = document.createElement('div');\n            btn.classList.add('seal-carousel_nav-btn');\n            btn.classList.add('prev-btn');\n            btn.addEventListener('click', () => {\n                EventDispatcher_1.default.trigger('navBtnClick', { direction: constants_1.default.SCROLL_DIRECTION_PREV });\n            });\n            return btn;\n        };\n        this.buildNextButton = () => {\n            const btn = document.createElement('div');\n            btn.classList.add('seal-carousel_nav-btn');\n            btn.classList.add('next-btn');\n            btn.addEventListener('click', () => {\n                EventDispatcher_1.default.trigger('navBtnClick', { direction: constants_1.default.SCROLL_DIRECTION_NEXT });\n            });\n            return btn;\n        };\n        this.buildNavButtons();\n    }\n}\nexports[\"default\"] = NavButtons;\n\n\n//# sourceURL=webpack://seal-carousel/./src/carousel/navigation/NavButtons.ts?");
 
 /***/ }),
 
@@ -170,13 +170,23 @@ eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {
 
 /***/ }),
 
+/***/ "./src/constants.ts":
+/*!**************************!*\
+  !*** ./src/constants.ts ***!
+  \**************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports[\"default\"] = {\n    SCROLL_DIRECTION_PREV: 'prev',\n    SCROLL_DIRECTION_NEXT: 'next',\n};\n\n\n//# sourceURL=webpack://seal-carousel/./src/constants.ts?");
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ./modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nconst Carousel_1 = __importDefault(__webpack_require__(/*! ./carousel/Carousel */ \"./src/carousel/Carousel.ts\"));\n__webpack_require__(/*! ./assets/styles/sass/index.scss */ \"./src/assets/styles/sass/index.scss\");\nconst carousel = {\n    setInstance: (selector, config = {}) => {\n        const instances = document.querySelectorAll(selector);\n        if (instances.length > 0) {\n            EventDispatcher_1.default.on('carouselInitialized', () => {\n                console.log('carousel initialized');\n            });\n            Array.prototype.forEach.call(instances, instance => {\n                new Carousel_1.default(instance, config);\n            });\n        }\n    },\n};\ncarousel.setInstance('div[data-type=\"carousel\"]', {\n    itemWidth: 152,\n    navButtons: true,\n});\n\n\n//# sourceURL=webpack://seal-carousel/./src/index.ts?");
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.store = exports.carousel = void 0;\nconst EventDispatcher_1 = __importDefault(__webpack_require__(/*! ./modules/EventDispatcher */ \"./src/modules/EventDispatcher.ts\"));\nconst Carousel_1 = __importDefault(__webpack_require__(/*! ./carousel/Carousel */ \"./src/carousel/Carousel.ts\"));\nconst Store_1 = __importDefault(__webpack_require__(/*! ./store/Store */ \"./src/store/Store.ts\"));\n__webpack_require__(/*! ./assets/styles/sass/index.scss */ \"./src/assets/styles/sass/index.scss\");\nconst initialState_1 = __webpack_require__(/*! ./store/initialState */ \"./src/store/initialState.ts\");\nconst reducer_1 = __webpack_require__(/*! ./store/reducer */ \"./src/store/reducer.ts\");\nconst store = new Store_1.default(reducer_1.reducer, initialState_1.initialState);\nexports.store = store;\nconst carousel = {\n    setInstance: (selector, config = {}) => {\n        const instances = document.querySelectorAll(selector);\n        if (instances.length > 0) {\n            EventDispatcher_1.default.on('carouselInitialized', () => {\n                console.log('carousel initialized');\n            });\n            Array.prototype.forEach.call(instances, instance => {\n                new Carousel_1.default(instance, config);\n            });\n        }\n    },\n};\nexports.carousel = carousel;\n// dev\ncarousel.setInstance('div[data-type=\"carousel\"]', {\n    itemWidth: 152,\n    navButtons: true,\n});\n\n\n//# sourceURL=webpack://seal-carousel/./src/index.ts?");
 
 /***/ }),
 
@@ -187,6 +197,116 @@ eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {
 /***/ ((__unused_webpack_module, exports) => {
 
 eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nclass EventDispatcher {\n    constructor() {\n        this.events = {};\n        this.on = (eventName, callback) => {\n            const handlers = this.events[eventName] || [];\n            handlers.push(callback);\n            this.events[eventName] = handlers;\n        };\n        this.trigger = (eventName, data) => {\n            const handlers = this.events[eventName];\n            if (!handlers || handlers.length < 1) {\n                return;\n            }\n            const event = { type: eventName, data };\n            Array.prototype.forEach.call(handlers, (handler) => {\n                handler(event);\n            });\n        };\n    }\n}\nconst dispatcher = new EventDispatcher();\nexports[\"default\"] = dispatcher;\n\n\n//# sourceURL=webpack://seal-carousel/./src/modules/EventDispatcher.ts?");
+
+/***/ }),
+
+/***/ "./src/store/Store.ts":
+/*!****************************!*\
+  !*** ./src/store/Store.ts ***!
+  \****************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nclass Store {\n    constructor(reducer, initialState) {\n        this.subscribers = [];\n        this.dispatch = (action) => {\n            this.state = this.reducer(this.state, action);\n            this.subscribers.forEach(sub => sub());\n        };\n        this.subscribe = (callback) => {\n            this.subscribers.push(callback);\n        };\n        this.reducer = reducer;\n        this.state = reducer(initialState, { type: '__INIT__' });\n    }\n    get state() {\n        return this._state;\n    }\n    set state(value) {\n        this._state = value;\n    }\n}\nexports[\"default\"] = Store;\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/Store.ts?");
+
+/***/ }),
+
+/***/ "./src/store/carousel/actionTypes.ts":
+/*!*******************************************!*\
+  !*** ./src/store/carousel/actionTypes.ts ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst prefix = 'carousel.';\nexports[\"default\"] = {\n    UPDATE_FRAME_WIDTH: `${prefix}UPDATE_FRAME_WIDTH`,\n};\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/carousel/actionTypes.ts?");
+
+/***/ }),
+
+/***/ "./src/store/carousel/actions.ts":
+/*!***************************************!*\
+  !*** ./src/store/carousel/actions.ts ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.updateFrameWidth = void 0;\nconst actionTypes_1 = __importDefault(__webpack_require__(/*! ./actionTypes */ \"./src/store/carousel/actionTypes.ts\"));\nconst updateFrameWidth = (width) => ({\n    type: actionTypes_1.default.UPDATE_FRAME_WIDTH,\n    width\n});\nexports.updateFrameWidth = updateFrameWidth;\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/carousel/actions.ts?");
+
+/***/ }),
+
+/***/ "./src/store/carousel/carouselReducer.ts":
+/*!***********************************************!*\
+  !*** ./src/store/carousel/carouselReducer.ts ***!
+  \***********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.carouselReducer = exports.carouselInitialState = void 0;\nconst actionTypes_1 = __importDefault(__webpack_require__(/*! ./actionTypes */ \"./src/store/carousel/actionTypes.ts\"));\nexports.carouselInitialState = {\n    width: 0,\n};\nconst carouselReducer = (state = exports.carouselInitialState, action) => {\n    switch (action.type) {\n        case actionTypes_1.default.UPDATE_FRAME_WIDTH:\n            return Object.assign(Object.assign({}, state), { width: action.width });\n        default:\n            return state;\n    }\n};\nexports.carouselReducer = carouselReducer;\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/carousel/carouselReducer.ts?");
+
+/***/ }),
+
+/***/ "./src/store/initialState.ts":
+/*!***********************************!*\
+  !*** ./src/store/initialState.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.initialState = void 0;\nconst carouselReducer_1 = __webpack_require__(/*! ./carousel/carouselReducer */ \"./src/store/carousel/carouselReducer.ts\");\nconst slidesReducer_1 = __webpack_require__(/*! ./slides/slidesReducer */ \"./src/store/slides/slidesReducer.ts\");\nconst tapeReducer_1 = __webpack_require__(/*! ./tape/tapeReducer */ \"./src/store/tape/tapeReducer.ts\");\nexports.initialState = {\n    carousel: carouselReducer_1.carouselInitialState,\n    tape: tapeReducer_1.tapeInitialState,\n    slides: slidesReducer_1.slidesInitialState,\n};\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/initialState.ts?");
+
+/***/ }),
+
+/***/ "./src/store/reducer.ts":
+/*!******************************!*\
+  !*** ./src/store/reducer.ts ***!
+  \******************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.reducer = void 0;\nconst initialState_1 = __webpack_require__(/*! ./initialState */ \"./src/store/initialState.ts\");\nconst carouselReducer_1 = __webpack_require__(/*! ./carousel/carouselReducer */ \"./src/store/carousel/carouselReducer.ts\");\nconst slidesReducer_1 = __webpack_require__(/*! ./slides/slidesReducer */ \"./src/store/slides/slidesReducer.ts\");\nconst tapeReducer_1 = __webpack_require__(/*! ./tape/tapeReducer */ \"./src/store/tape/tapeReducer.ts\");\nconst reducer = (state = initialState_1.initialState, action) => {\n    const prefix = action.type.replace(/^([a-z]+)\\.[A-Z_]+/, \"$1\");\n    switch (prefix) {\n        case 'carousel':\n            return Object.assign(Object.assign({}, state), { carousel: (0, carouselReducer_1.carouselReducer)(state.carousel, action) });\n        case 'tape':\n            return Object.assign(Object.assign({}, state), { tape: (0, tapeReducer_1.tapeReducer)(state.tape, action) });\n        case 'slides':\n            return Object.assign(Object.assign({}, state), { slides: (0, slidesReducer_1.slidesReducer)(state.slides, action) });\n        default:\n            return state;\n    }\n};\nexports.reducer = reducer;\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/reducer.ts?");
+
+/***/ }),
+
+/***/ "./src/store/slides/actionTypes.ts":
+/*!*****************************************!*\
+  !*** ./src/store/slides/actionTypes.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst prefix = 'slides.';\nexports[\"default\"] = {\n    UPDATE_SLIDES: `${prefix}UPDATE_SLIDES`,\n};\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/slides/actionTypes.ts?");
+
+/***/ }),
+
+/***/ "./src/store/slides/actions.ts":
+/*!*************************************!*\
+  !*** ./src/store/slides/actions.ts ***!
+  \*************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.updateSlides = void 0;\nconst actionTypes_1 = __importDefault(__webpack_require__(/*! ../slides/actionTypes */ \"./src/store/slides/actionTypes.ts\"));\nconst updateSlides = (slides) => ({\n    type: actionTypes_1.default.UPDATE_SLIDES,\n    slides\n});\nexports.updateSlides = updateSlides;\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/slides/actions.ts?");
+
+/***/ }),
+
+/***/ "./src/store/slides/slidesReducer.ts":
+/*!*******************************************!*\
+  !*** ./src/store/slides/slidesReducer.ts ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.slidesReducer = exports.slidesInitialState = void 0;\nconst actionTypes_1 = __importDefault(__webpack_require__(/*! ./actionTypes */ \"./src/store/slides/actionTypes.ts\"));\nexports.slidesInitialState = {\n    items: [],\n};\nconst slidesReducer = (state = exports.slidesInitialState, action) => {\n    switch (action.type) {\n        case actionTypes_1.default.UPDATE_SLIDES:\n            return Object.assign(Object.assign({}, state), { items: action.slides });\n        default:\n            return state;\n    }\n};\nexports.slidesReducer = slidesReducer;\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/slides/slidesReducer.ts?");
+
+/***/ }),
+
+/***/ "./src/store/tape/actionTypes.ts":
+/*!***************************************!*\
+  !*** ./src/store/tape/actionTypes.ts ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst prefix = 'tape.';\nexports[\"default\"] = {\n    UPDATE_POSITION: `${prefix}UPDATE_POSITION`,\n};\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/tape/actionTypes.ts?");
+
+/***/ }),
+
+/***/ "./src/store/tape/tapeReducer.ts":
+/*!***************************************!*\
+  !*** ./src/store/tape/tapeReducer.ts ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.tapeReducer = exports.tapeInitialState = void 0;\nconst actionTypes_1 = __importDefault(__webpack_require__(/*! ./actionTypes */ \"./src/store/tape/actionTypes.ts\"));\nexports.tapeInitialState = {\n    position: 0,\n};\nconst tapeReducer = (state = exports.tapeInitialState, action) => {\n    switch (action.type) {\n        case actionTypes_1.default.UPDATE_POSITION:\n            return Object.assign(Object.assign({}, state), { position: action.position });\n        default:\n            return state;\n    }\n};\nexports.tapeReducer = tapeReducer;\n\n\n//# sourceURL=webpack://seal-carousel/./src/store/tape/tapeReducer.ts?");
 
 /***/ })
 

@@ -9,7 +9,7 @@
     "ts-build": "tsc --project tsconfig.json --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Seal",
+  "author": "Nick Seal",
   "license": "ISC",
   "devDependencies": {
     "webpack": "^5.68.0",

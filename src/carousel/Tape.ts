@@ -1,53 +1,53 @@
-import dispatcher from "../modules/EventDispatcher";
+import dispatcher, { CarouselEvent } from "../modules/EventDispatcher";
+import { store } from "../index";
 import Carousel from "./Carousel";
 import Slide from "./Slide";
+import constants from "../constants";
 
 class Tape {
-    private readonly _carousel: Carousel;
     private readonly _element: HTMLDivElement;
-    private _slides: Slide[]; //?
-    private _position: number;
-
-    get carousel(): Carousel {
-        return this._carousel;
-    }
 
     get element(): HTMLDivElement {
         return this._element;
     }
 
-    get position(): number {
-        return this._position;
-    }
-
-    set position(value: number) {
-        this._position = value;
-        dispatcher.trigger('changeTapePosition', {position: value})
-    }
-
-    constructor(carousel: Carousel, slides: HTMLElement[]) {
+    constructor(carousel: Carousel) {
         this._element = this.createTapeElement();
-        this._carousel = carousel;
         carousel.element.appendChild(this._element);
 
-        this.initSlides(slides);
+        this.initSlides();
+        this.initListeners();
+    }
 
-        dispatcher.on('navBtnClick', (evt) => {
-            if (evt.data.direction === 'next') {
-                this.position = -10;
-            } else if (evt.data.direction === 'prev') {
-                this.position = 0;
+    initSlides = (): void => {
+        store.subscribe(() => {
+            if (store.state.slides.items.length > 0) {
+                store.state.slides.items.forEach((item: Slide) => {
+                    item.init(this);
+                });
             }
-        });
+        })
     }
 
-    initSlides = (slides: HTMLElement[]) => {
-        Array.prototype.forEach.call(slides, slideElement => {
-            new Slide(this, slideElement)
-        });
+    initListeners = (): void => {
+        dispatcher.on('navBtnClick', this.scrollByStep);
     }
 
+    scrollByStep = (evt: CarouselEvent) => {
+        if (evt.data.direction === constants.SCROLL_DIRECTION_PREV) {
+            this.scrollByStepPrev();
+        } else if (evt.data.direction === constants.SCROLL_DIRECTION_NEXT) {
+            this.scrollByStepNext();
+        }
+    }
 
+    private scrollByStepPrev = () => {
+        console.log('scroll prev');
+    }
+
+    private scrollByStepNext = () => {
+        console.log('scroll next');
+    }
 
     private createTapeElement = (): HTMLDivElement => {
         const tape = document.createElement('div');

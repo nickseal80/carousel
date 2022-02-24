@@ -1,7 +1,11 @@
 import dispatcher from "../modules/EventDispatcher";
+import {store} from "../index";
 import {Config} from "../interfaces/Config";
 import Tape from "./Tape";
 import Navigation from "./navigation/Navigation";
+import {updateFrameWidth} from "../store/carousel/actions";
+import Slide from "./Slide";
+import { updateSlides } from "../store/slides/actions";
 
 class Carousel {
     private readonly _element: HTMLDivElement;
@@ -26,6 +30,19 @@ class Carousel {
         const slides: HTMLElement[] = Array.prototype.slice.call(this.element.children);
 
         if (slides.length > 0) {
+
+            const items = slides.map((slide: HTMLElement) => {
+                let width: string;
+
+                if (this.config.itemWidth) {
+                    width = `${this.config.itemWidth}px`;
+                } else {
+                    width = getComputedStyle(slide).width;
+                }
+                slide.style.minWidth = width;
+                return new Slide(slide);
+            });
+
             this._element.innerHTML = '';
 
             // вставка навигационных кнопок
@@ -34,7 +51,10 @@ class Carousel {
             }
 
             // вставка слайдера
-            new Tape(this, slides);
+            new Tape(this);
+
+            store.dispatch(updateFrameWidth(this.element.getBoundingClientRect().width));
+            store.dispatch(updateSlides(items));
 
             dispatcher.trigger('carouselInitialized', { carousel: this });
         }

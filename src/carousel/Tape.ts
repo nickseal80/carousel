@@ -109,10 +109,10 @@ class Tape {
             //
         }
 
-        // this.animateSlide(-shiftWidth);
+        // this.scroll(-shiftWidth);
     }
 
-    private animateSlide = (distance: number) => {
+    private scroll = (distance: number) => {
         let timingFunc = 'quad';
         if (store.state.carousel.config.scrollOptions && store.state.carousel.config.scrollOptions?.animation) {
             timingFunc = store.state.carousel.config.scrollOptions?.animation;

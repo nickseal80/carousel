@@ -26,5 +26,15 @@ export interface Config {
          * параметр scrollItemsCount игнорируется
          */
         scrollPage?: boolean;
+
+        /*
+         * тип анимации (по умолчанию "quad")
+         */
+        animation?: string;
+
+        /*
+         * длительность анимации (мс)
+         */
+        animDuration?: number;
     }
 }

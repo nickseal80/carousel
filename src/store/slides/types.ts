@@ -8,3 +8,7 @@ export interface SlidesInitialState {
 export interface UpdateSlidesAction extends Action {
     slides: Slide[];
 }
+
+export interface UpdateSlideAction extends Action {
+    slide: Slide;
+}

@@ -1,5 +1,5 @@
 export type Timing = (timeFraction: number) => number;
-export type Draw = (progress: number) => number;
+export type Draw = (progress: number) => void;
 export type AnimationData = {
     timing: Timing;
     draw: Draw;

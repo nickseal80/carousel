@@ -1,5 +1,6 @@
 const prefix = 'carousel.';
 
 export default {
-    UPDATE_FRAME_WIDTH: `${prefix}UPDATE_FRAME_WIDTH`,
+    UPDATE_CONFIG: `${prefix}UPDATE_CONFIG`,
+    UPDATE_FRAME_AXIS: `${prefix}UPDATE_FRAME_AXIS`,
 }

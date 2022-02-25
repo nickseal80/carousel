@@ -8,7 +8,7 @@ import {reducer} from "./store/reducer";
 
 const store = new Store(reducer, initialState);
 
-const carousel: { [key: string]: (arg0: string, arg1: Config) => void } = {
+const carousel: { [key: string]: (arg0: string, arg1?: Config) => void } = {
     setInstance: (selector: string, config: Config|{} = {}) => {
         const instances: NodeList = document.querySelectorAll(selector);
 
@@ -31,7 +31,9 @@ carousel.setInstance('div[data-type="carousel"]', {
     itemWidth: 152,
     navButtons: true,
     scrollOptions: {
-        scrollItemsCount: 1,
+        scrollItemsCount: 2,
         scrollPage: false,
+        animation: 'quadEaseOut',
+        animDuration: 800,
     }
 });

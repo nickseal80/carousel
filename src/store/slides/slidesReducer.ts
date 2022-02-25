@@ -12,6 +12,12 @@ export const slidesReducer = (state: SlidesInitialState = slidesInitialState, ac
         case actionTypes.UPDATE_SLIDES:
             return { ...state, items: action.slides };
 
+        case actionTypes.UPDATE_SLIDE:
+            const slides = [ ...state.items ];
+            slides.splice(action.slide.order, 1, action.slide);
+            return { ...state, items: slides };
+
+
         default:
             return state;
     }

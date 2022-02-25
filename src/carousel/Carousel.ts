@@ -1,9 +1,9 @@
 import dispatcher from "../modules/EventDispatcher";
-import {store} from "../index";
-import {Config} from "../interfaces/Config";
+import { store } from "../index";
+import { Config } from "../interfaces/Config";
 import Tape from "./Tape";
 import Navigation from "./navigation/Navigation";
-import {updateFrameWidth} from "../store/carousel/actions";
+import { updateConfig, updateFrameAxis } from "../store/carousel/actions";
 import Slide from "./Slide";
 import { updateSlides } from "../store/slides/actions";
 
@@ -52,9 +52,19 @@ class Carousel {
 
             // вставка слайдера
             new Tape(this);
-
-            store.dispatch(updateFrameWidth(this.element.getBoundingClientRect().width));
             store.dispatch(updateSlides(items));
+
+            const domRect = this.element.getBoundingClientRect();
+            const axis = {
+                width: domRect.width,
+                height: domRect.height,
+                posX: domRect.x,
+                posY: domRect.y,
+                left: domRect.left,
+                right: domRect.right,
+            }
+            store.dispatch(updateFrameAxis(axis));
+            store.dispatch(updateConfig(this.config));
 
             dispatcher.trigger('carouselInitialized', { carousel: this });
         }

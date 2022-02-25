@@ -2,7 +2,7 @@ import {State, Reducer, Action} from "./types";
 
 class Store {
     private _state: State;
-    private subscribers: Array<() => void> = [];
+    private subscribers: Array<(type: string) => void> = [];
     private readonly reducer: Reducer;
 
     get state(): State {
@@ -20,10 +20,10 @@ class Store {
 
     dispatch = (action: Action): void => {
         this.state = this.reducer(this.state, action);
-        this.subscribers.forEach(sub => sub());
+        this.subscribers.forEach(sub => sub(action.type));
     }
 
-    subscribe = (callback: () => void): void => {
+    subscribe = (callback: (type: string) => void): void => {
         this.subscribers.push(callback);
     }
 }

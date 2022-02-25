@@ -34,3 +34,14 @@ export const circEaseOut = makeEaseOut(circ);
 
 export const bounceEaseOut = makeEaseOut(bounce);
 
+export const timing = {
+    linear,
+    quad,
+    circ,
+    back,
+    bounce,
+    quadEaseOut,
+    circEaseOut,
+    bounceEaseOut,
+};
+

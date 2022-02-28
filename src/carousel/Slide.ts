@@ -24,14 +24,11 @@ class Slide {
     }
 
     init = (tape: Tape, order: number) => {
+        this.element.classList.add('tape-slide')
         tape.element.appendChild(this.element);
         this._order = order;
 
         store.subscribe((type: string) => {
-            if (type === carouselActionTypes.UPDATE_FRAME_AXIS) {
-                this.update();
-            }
-
             if (type === tapeActionTypes.UPDATE_POSITION) {
                 this.update();
             }

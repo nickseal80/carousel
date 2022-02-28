@@ -10,10 +10,12 @@ import { Config } from "../interfaces/Config";
 import { animate } from "../animation/animation";
 import { timing } from "../animation/timing";
 import { updatePosition } from "../store/tape/actions";
+import { Axis } from "../interfaces/Axis";
 
 class Tape {
     private readonly _element: HTMLDivElement;
     private _config: Config = {};
+    public axis: Axis;
 
     get element(): HTMLDivElement {
         return this._element;
@@ -27,7 +29,7 @@ class Tape {
         this._element = this.createTapeElement();
         carousel.element.appendChild(this._element);
 
-        this.initSlides();
+        this.initSlides(carousel);
         this.initListeners();
 
         store.subscribe((type: string) => {
@@ -37,17 +39,27 @@ class Tape {
         });
     }
 
-    initSlides = (): void => {
+    initSlides = (carousel: Carousel): void => {
         store.subscribe((type: string) => {
 
-            if (store.state.slides.items.length > 0 && type === slidesActionTypes.UPDATE_SLIDES) {
+            if (store.state.slides.items.length > 0 && type === carouselActionTypes.UPDATE_FRAME_AXIS) {
+                let absWidth = 0;
                 store.state.slides.items.forEach((item: Slide, index: number) => {
                     item.init(this, index);
+                    item.update();
+                    absWidth += item.getAbsoluteWidth();
                 });
+                this.element.style.width = `${absWidth}px`;
             }
 
             if (type === tapeActionTypes.UPDATE_POSITION) {
                 this.element.style.left = `${store.state.tape.position}px`;
+
+                const data = {
+                    instance: carousel,
+                    position: store.state.tape.position,
+                }
+                dispatcher.trigger('carouselScroll', data);
             }
         })
     }
@@ -57,6 +69,7 @@ class Tape {
     }
 
     scrollByStep = (evt: CarouselEvent) => {
+        this.update();
         let mode: number = 1;
 
         if (this.config.scrollOptions) {
@@ -67,49 +80,57 @@ class Tape {
             }
         }
 
-        if (evt.data.direction === constants.SCROLL_DIRECTION_PREV) {
-            this.scrollByStepPrev(mode);
-        } else if (evt.data.direction === constants.SCROLL_DIRECTION_NEXT) {
-            this.scrollByStepNext(mode);
-        }
-    }
-
-    private scrollByStepPrev = (mode: number) => {
-        if (mode !== -1) {
-            //
-        }
-    }
-
-    private scrollByStepNext = (mode: number) => {
         const slides: Slide[] = store.state.slides.items;
         const visibleSlides = slides.filter((slide: Slide) => slide.visible);
         let shiftWidth = 0;
+        let toEndWidth: number;
 
-        if (mode !== -1) {
+        visibleSlides.forEach((slide: Slide, index: number) => {
+            if (mode !== -1 && index <= mode - 1) {
+                shiftWidth += slide.getAbsoluteWidth();
+            }
 
-            // TODO: додумать. Хрень.
+            if (mode === -1) {
+                shiftWidth += slide.getAbsoluteWidth();
+            }
+        });
 
-            // const lastVisibleSlide = visibleSlides[visibleSlides.length - 1];
-            // slides.forEach((slide: Slide, index: number) => {
-            //     if (index > lastVisibleSlide.order && index <= lastVisibleSlide.order + mode) {
-            //         if (slide.order === slides.length - 1) {
-            //             // считаем конец
-            //         } else {
-            //
-            //         }
-            //     }
-            // });
+        // прокрутка вперёд
+        if (evt.data.direction === constants.SCROLL_DIRECTION_PREV) {
+            const carouselLeftPos = store.state.carousel.axis.left;
+            const tapeLeftPos = this.axis.left;
+            toEndWidth = carouselLeftPos - tapeLeftPos;
 
-            // visibleSlides.forEach((slide: Slide, index: number) => {
-            //     if (index <= mode - 1) {
-            //         shiftWidth += slide.getAbsoluteWidth();
-            //     }
-            // });
-        } else {
-            //
+            if (shiftWidth < toEndWidth) {
+                this.scroll(shiftWidth);
+            } else {
+                this.scroll(toEndWidth);
+            }
+
+        // прокрутка назад
+        } else if (evt.data.direction === constants.SCROLL_DIRECTION_NEXT) {
+            const carouselRightPos = store.state.carousel.axis.right;
+            const tapeRightPos = this.axis.right;
+            toEndWidth = tapeRightPos - carouselRightPos;
+
+            if (shiftWidth < toEndWidth) {
+                this.scroll(-shiftWidth);
+            } else {
+                this.scroll(-toEndWidth);
+            }
         }
+    }
 
-        // this.scroll(-shiftWidth);
+    update = () => {
+        const domRect = this.element.getBoundingClientRect();
+        this.axis = {
+            width: domRect.width,
+            height: domRect.height,
+            posX: domRect.x,
+            posY: domRect.y,
+            left: domRect.left,
+            right: domRect.right,
+        }
     }
 
     private scroll = (distance: number) => {

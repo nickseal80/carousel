@@ -14,6 +14,7 @@ export interface Config {
      * кнопки навигации
      */
     navButtons?: boolean;
+
     scrollOptions?: {
 
         /*

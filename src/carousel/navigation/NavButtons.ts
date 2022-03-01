@@ -24,7 +24,7 @@ class NavButtons {
         btn.classList.add('seal-carousel_nav-btn');
         btn.classList.add('prev-btn');
         btn.addEventListener('click', () => {
-            dispatcher.trigger('navBtnClick', {direction: constants.SCROLL_DIRECTION_PREV});
+            dispatcher.trigger('navBtnClick', { direction: constants.SCROLL_DIRECTION_PREV });
         });
 
         return btn;
@@ -35,7 +35,7 @@ class NavButtons {
         btn.classList.add('seal-carousel_nav-btn');
         btn.classList.add('next-btn');
         btn.addEventListener('click', () => {
-            dispatcher.trigger('navBtnClick', {direction: constants.SCROLL_DIRECTION_NEXT});
+            dispatcher.trigger('navBtnClick', { direction: constants.SCROLL_DIRECTION_NEXT });
         });
 
         return btn;

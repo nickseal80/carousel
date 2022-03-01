@@ -3,19 +3,24 @@ import { store } from "../index";
 import Carousel from "./Carousel";
 import Slide from "./Slide";
 import constants from "../constants";
-import slidesActionTypes from "../store/slides/actionTypes";
 import carouselActionTypes from "../store/carousel/actionTypes";
 import tapeActionTypes from "../store/tape/actionTypes";
 import { Config } from "../interfaces/Config";
-import { animate } from "../animation/animation";
-import { timing } from "../animation/timing";
+import { animate } from "../modules/animation/animation";
+import { timing } from "../modules/animation/timing";
 import { updatePosition } from "../store/tape/actions";
 import { Axis } from "../interfaces/Axis";
+import { MovingData } from "../interfaces/MovingData";
 
 class Tape {
+    public axis: Axis;
+    public tapeCanMoved: boolean = false;
+    public tapeMoving: boolean = false;
+    public movingData: MovingData;
+    public decelerationFactor: number = 0;
+
     private readonly _element: HTMLDivElement;
     private _config: Config = {};
-    public axis: Axis;
 
     get element(): HTMLDivElement {
         return this._element;
@@ -66,6 +71,49 @@ class Tape {
 
     initListeners = (): void => {
         dispatcher.on('navBtnClick', this.scrollByStep);
+
+        this.element.addEventListener('mousedown', this.mouseDownHandler);
+        this.element.addEventListener('mouseup', this.mouseUpHandler);
+        this.element.addEventListener('mousemove', this.mouseMoveHandler);
+
+        document.addEventListener('mouseup', this.mouseUpHandler);
+
+    }
+
+    mouseDownHandler = (evt: MouseEvent) => {
+        evt.preventDefault();
+        this.tapeCanMoved = true;
+        this.update();
+        this.updateMovingData(evt.pageX);
+    }
+
+    mouseMoveHandler = (evt: MouseEvent) => {
+        if (this.tapeCanMoved) {
+            this.tapeMoving = true;
+
+            let movingPosition = evt.pageX - this.movingData.startPosition;
+            let position = this.movingData.tapePosition + movingPosition;
+
+            // TODO: додумать торможение
+            if (position >= 0 || position <= -this.axis.width + store.state.carousel.axis.width) {
+                this.decelerationFactor = movingPosition * 0.9;
+                // position = this.movingData.tapePosition + movingPosition - this.decelerationFactor;
+            }
+
+            store.dispatch(updatePosition(position));
+            this.update();
+        }
+    }
+
+    mouseUpHandler = (evt: MouseEvent) => {
+        this.update();
+        this.tapeMoving = false;
+        this.tapeCanMoved = false;
+        this.decelerationFactor = 0;
+    }
+
+    alignTape = () => {
+        //
     }
 
     scrollByStep = (evt: CarouselEvent) => {
@@ -149,6 +197,7 @@ class Tape {
         animate({
             duration,
 
+            // TODO: разобраться с типами
             // @ts-ignore
             timing: timing[timingFunc],
 
@@ -156,6 +205,14 @@ class Tape {
                 store.dispatch(updatePosition(position + (progress * distance)));
             }
         })
+    }
+
+    private updateMovingData = (pageX: number) => {
+        const movingData = { ...this.movingData };
+        movingData.startPosition = pageX;
+        movingData.tapePosition = store.state.tape.position;
+
+        this.movingData = movingData;
     }
 
     private createTapeElement = (): HTMLDivElement => {

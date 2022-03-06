@@ -11,6 +11,7 @@ import { timing } from "../modules/animation/timing";
 import {updateDirection, updatePosition} from "../store/tape/actions";
 import { Axis } from "../interfaces/Axis";
 import { MovingData } from "../interfaces/MovingData";
+import slide from "./Slide";
 
 class Tape {
     public axis: Axis;
@@ -121,11 +122,20 @@ class Tape {
 
     alignTape = () => {
         const { direction, position } = store.state.tape;
+        const slides: Slide[] = store.state.slides.items;
 
         if (position > 0) {
             this.scroll(-position);
         } else if (position < -this.axis.width + store.state.carousel.axis.width) {
             this.scroll(-this.axis.width + store.state.carousel.axis.width - position);
+        } else {
+            if (direction === constants.SCROLL_DIRECTION_PREV) {
+                const alignableSlide = slides.find((slide: Slide) => slide.alignableLeft);
+                console.log(alignableSlide);
+            } else if (direction === constants.SCROLL_DIRECTION_NEXT) {
+                const alignableSlide = slides.find((slide: Slide) => slide.alignableRight);
+                console.log(alignableSlide);
+            }
         }
     }
 

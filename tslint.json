@@ -5,8 +5,9 @@
     ],
     "jsRules": {},
     "rules": {
-        "no-console": false
-//        "no-reference": false
+        "no-console": false,
+//        "no-reference": false,
+        "no-shadowed-variable": false
     },
     "rulesDirectory": []
 }

@@ -1,15 +1,18 @@
 import Tape from "./Tape";
-import { store } from "../index";
-import { Axis } from "../interfaces/Axis";
+import {store} from "../index";
+import {Axis} from "../interfaces/Axis";
 import carouselActionTypes from "../store/carousel/actionTypes";
 import tapeActionTypes from "../store/tape/actionTypes";
-import { updateSlide } from "../store/slides/actions";
+import {updateSlide} from "../store/slides/actions";
 
 class Slide {
-    private readonly _element: HTMLElement;
-    private _order: number;
     public visible: boolean = false;
     public axis: Axis;
+    public alignableLeft: boolean = false;
+    public alignableRight: boolean = false;
+
+    private readonly _element: HTMLElement;
+    private _order: number;
 
     get element(): HTMLElement {
         return this._element;
@@ -54,6 +57,22 @@ class Slide {
             this.element.classList.remove('_active');
         }
 
+        if (this.isAlignableLeft()) {
+            this.alignableLeft = true;
+            this.element.classList.add('_alignable-left');
+        } else {
+            this.alignableLeft = false;
+            this.element.classList.remove('_alignable-left');
+        }
+
+        if (this.isAlignableRight()) {
+            this.alignableRight = true;
+            this.element.classList.add('_alignable-right');
+        } else {
+            this.alignableRight = false;
+            this.element.classList.remove('_alignable-right');
+        }
+
         store.dispatch(updateSlide(this));
     }
 
@@ -69,6 +88,20 @@ class Slide {
             this.axis.left >= store.state.carousel.axis.left &&
             this.axis.right <= store.state.carousel.axis.right
         );
+    }
+
+    isAlignableLeft = (): boolean => {
+        return (
+            this.axis.left < store.state.carousel.axis.left &&
+            this.axis.right > store.state.carousel.axis.left
+        );
+    }
+
+    isAlignableRight = (): boolean => {
+        return (
+            this.axis.left < store.state.carousel.axis.right &&
+            this.axis.right > store.state.carousel.axis.right
+        )
     }
 }
 

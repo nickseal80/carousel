@@ -6,6 +6,7 @@ export const tapeInitialState: TapeInitialState = {
     position: 0,
     tapeCanMoved: false,
     tapeMoving: false,
+    direction: undefined,
 }
 
 export const tapeReducer = (state: TapeInitialState = tapeInitialState, action: Action) => {
@@ -19,6 +20,9 @@ export const tapeReducer = (state: TapeInitialState = tapeInitialState, action: 
 
         case actionTypes.UPDATE_TAPE_MOVING:
             return { ...state, tapeMoving: action.state };
+
+        case actionTypes.UPDATE_DIRECTION:
+            return { ...state, direction: action.direction };
 
         default:
             return state;

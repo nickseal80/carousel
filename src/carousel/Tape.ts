@@ -8,7 +8,7 @@ import tapeActionTypes from "../store/tape/actionTypes";
 import { Config } from "../interfaces/Config";
 import { animate } from "../modules/animation/animation";
 import { timing } from "../modules/animation/timing";
-import { updatePosition } from "../store/tape/actions";
+import {updateDirection, updatePosition} from "../store/tape/actions";
 import { Axis } from "../interfaces/Axis";
 import { MovingData } from "../interfaces/MovingData";
 
@@ -91,15 +91,21 @@ class Tape {
         if (this.tapeCanMoved) {
             this.tapeMoving = true;
 
-            let movingPosition = evt.pageX - this.movingData.startPosition;
-            let position = this.movingData.tapePosition + movingPosition;
+            const movingPosition = evt.pageX - this.movingData.startPosition;
+            const position = this.movingData.tapePosition + movingPosition - this.decelerationFactor;
 
-            // TODO: додумать торможение
-            if (position >= 0 || position <= -this.axis.width + store.state.carousel.axis.width) {
-                this.decelerationFactor = movingPosition * 0.9;
-                // position = this.movingData.tapePosition + movingPosition - this.decelerationFactor;
+            let direction: string|undefined;
+            if (movingPosition > 0) {
+                direction = constants.SCROLL_DIRECTION_PREV;
+            } else if (movingPosition < 0) {
+                direction = constants.SCROLL_DIRECTION_NEXT;
             }
 
+            if (position >= 0 || position <= -this.axis.width + store.state.carousel.axis.width) {
+                this.decelerationFactor += 1.5;
+            }
+
+            store.dispatch(updateDirection(direction));
             store.dispatch(updatePosition(position));
             this.update();
         }
@@ -110,10 +116,17 @@ class Tape {
         this.tapeMoving = false;
         this.tapeCanMoved = false;
         this.decelerationFactor = 0;
+        this.alignTape();
     }
 
     alignTape = () => {
-        //
+        const { direction, position } = store.state.tape;
+
+        if (position > 0) {
+            this.scroll(-position);
+        } else if (position < -this.axis.width + store.state.carousel.axis.width) {
+            this.scroll(-this.axis.width + store.state.carousel.axis.width - position);
+        }
     }
 
     scrollByStep = (evt: CarouselEvent) => {

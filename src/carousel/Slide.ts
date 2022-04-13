@@ -1,7 +1,7 @@
 import Tape from "./Tape";
 import {store} from "../index";
 import {Axis} from "../interfaces/Axis";
-import carouselActionTypes from "../store/carousel/actionTypes";
+import {Margins} from "../interfaces/Margins";
 import tapeActionTypes from "../store/tape/actionTypes";
 import {updateSlide} from "../store/slides/actions";
 
@@ -77,10 +77,19 @@ class Slide {
     }
 
     getAbsoluteWidth = (): number => {
+        const margins = this.getMargins();
+
+        return this.axis.width + margins.marginLeft + margins.marginRight;
+    }
+
+    getMargins = (): Margins => {
         const marginLeft = getComputedStyle(this.element).marginLeft.replace(/(\d+).+/, "$1");
         const marginRight = getComputedStyle(this.element).marginRight.replace(/(\d+).+/, "$1");
 
-        return this.axis.width + Number(marginLeft) + Number(marginRight);
+        return {
+            marginLeft: Number(marginLeft),
+            marginRight: Number(marginRight),
+        }
     }
 
     isSlideInFrame = (): boolean => {

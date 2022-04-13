@@ -11,7 +11,6 @@ import { timing } from "../modules/animation/timing";
 import {updateDirection, updatePosition} from "../store/tape/actions";
 import { Axis } from "../interfaces/Axis";
 import { MovingData } from "../interfaces/MovingData";
-import slide from "./Slide";
 
 class Tape {
     public axis: Axis;
@@ -112,7 +111,7 @@ class Tape {
         }
     }
 
-    mouseUpHandler = (evt: MouseEvent) => {
+    mouseUpHandler = () => {
         this.update();
         this.tapeMoving = false;
         this.tapeCanMoved = false;
@@ -131,10 +130,18 @@ class Tape {
         } else {
             if (direction === constants.SCROLL_DIRECTION_PREV) {
                 const alignableSlide = slides.find((slide: Slide) => slide.alignableLeft);
-                console.log(alignableSlide);
+                if (alignableSlide) {
+                    const absoluteLeft = alignableSlide.axis.left - alignableSlide.getMargins().marginLeft;
+                    const align = store.state.carousel.axis.left - absoluteLeft;
+                    this.scroll(align);
+                }
             } else if (direction === constants.SCROLL_DIRECTION_NEXT) {
                 const alignableSlide = slides.find((slide: Slide) => slide.alignableRight);
-                console.log(alignableSlide);
+                if (alignableSlide) {
+                    const absoluteRight = alignableSlide.axis.right + alignableSlide.getMargins().marginRight;
+                    const align = store.state.carousel.axis.right - absoluteRight;
+                    this.scroll(align);
+                }
             }
         }
     }

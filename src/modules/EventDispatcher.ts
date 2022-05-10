@@ -12,7 +12,7 @@ class EventDispatcher {
         this.events[eventName] = handlers;
     }
 
-    public trigger = (eventName: string, data: EventData) => {
+    public trigger = (eventName: string, data?: EventData) => {
         const handlers = this.events[eventName];
 
         if (! handlers || handlers.length < 1) {

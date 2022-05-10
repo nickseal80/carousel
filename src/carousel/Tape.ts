@@ -108,6 +108,7 @@ class Tape {
             store.dispatch(updateDirection(direction));
             store.dispatch(updatePosition(position));
             this.update();
+            dispatcher.trigger('carouselMove');
         }
     }
 
@@ -117,6 +118,7 @@ class Tape {
         this.tapeCanMoved = false;
         this.decelerationFactor = 0;
         this.alignTape();
+        dispatcher.trigger('carouselMoveStop');
     }
 
     alignTape = () => {

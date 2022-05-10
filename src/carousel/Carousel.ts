@@ -24,6 +24,7 @@ class Carousel {
         this._config = config;
         this.element.classList.add('seal-carousel');
         this.init();
+        this.initListeners();
     }
 
     init = () => {
@@ -68,6 +69,26 @@ class Carousel {
 
             dispatcher.trigger('carouselInitialized', { carousel: this });
         }
+    }
+
+    initListeners = () => {
+        dispatcher.on('carouselMove', () => {
+            const linkCollection = this.element.querySelectorAll('a');
+            if (linkCollection.length > 0) {
+                linkCollection.forEach((link) => {
+                    link.style.pointerEvents = 'none';
+                })
+            }
+        });
+
+        dispatcher.on('carouselMoveStop', () => {
+            const linkCollection = this.element.querySelectorAll('a');
+            if (linkCollection.length > 0) {
+                linkCollection.forEach((link) => {
+                    link.style.pointerEvents = 'auto';
+                })
+            }
+        });
     }
 }
 
